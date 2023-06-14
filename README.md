@@ -1,2 +1,3 @@
-# blog
-Blog App built with React, Redux Toolkit, RTK Query, Express / Node.js, Mongoose / MongoDB, and Material UI
+# Blog
+
+Blog app built with React, Redux Toolkit, RTK Query, Express / Node.js, Mongoose / MongoDB, Material UI, and Vite
