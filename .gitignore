@@ -150,3 +150,6 @@ out
 .vscode/
 .vscode/extensions.json
 hintrc
+
+untested/
+untested
