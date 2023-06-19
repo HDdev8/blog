@@ -1,0 +1,29 @@
+GET http://localhost:3001/api/posts
+
+###
+GET http://localhost:3001/api/posts/id
+
+###
+POST http://localhost:3001/api/posts
+Content-Type: application/json
+Authorization: Bearer <token>
+
+ {
+ "title": "test title"
+ }
+
+###
+PUT http://localhost:3001/api/posts/id
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "likes": 18
+}
+
+###
+DELETE http://localhost:3001/api/posts/id
+Authorization: Bearer <token>
+
+
+

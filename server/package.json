@@ -1,0 +1,45 @@
+{
+  "author": "hddev8",
+  "name": "blog-server",
+  "description": "blog server",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "build:ui": "rm -rf dist && cd ../client && npm run build && cp -r dist ../server",
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push",
+    "dev": "cross-env NODE_ENV=development nodemon index.js",
+    "lint": "eslint .",
+    "start": "cross-env NODE_ENV=production node index.js",
+    "start:test": "NODE_ENV=test node index.js",
+    "test": "cross-env NODE_ENV=test jest --verbose --runInBand"
+  },
+  "jest": {
+    "globalTeardown": "./tests/teardown.js",
+    "testEnvironment": "node"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.1.4",
+    "express": "^4.18.2",
+    "express-async-errors": "^3.1.1",
+    "helmet": "^7.0.0",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.2.4",
+    "mongoose-unique-validator": "^4.0.0",
+    "npm-check-updates": "^16.10.12"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "eslint": "^8.42.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-jest": "^27.2.1",
+    "eslint-plugin-n": "^16.0.0",
+    "eslint-plugin-security": "^1.7.1",
+    "jest": "^29.5.0",
+    "nodemon": "^2.0.22",
+    "prettier": "^2.8.8",
+    "supertest": "^6.3.3"
+  }
+}

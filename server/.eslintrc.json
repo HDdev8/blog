@@ -1,0 +1,28 @@
+{
+  "env": {
+    "node": true,
+    "commonjs": true,
+    "es2021": true,
+    "jest": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:n/recommended",
+    "plugin:security/recommended",
+    "plugin:jest/recommended",
+    "eslint-config-prettier"
+  ],
+  "overrides": [],
+  "parserOptions": {
+    "ecmaVersion": "latest"
+  },
+  "plugins": ["n", "security", "jest"],
+  "rules": {
+    "linebreak-style": ["error", "unix"],
+    "eqeqeq": "error",
+    "no-trailing-spaces": "error",
+    "object-curly-spacing": ["error", "never"],
+    "arrow-spacing": ["error", {"before": true, "after": true}],
+    "no-console": 0
+  }
+}
