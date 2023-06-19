@@ -19,11 +19,11 @@ Cypress.Commands.add("login", ({username, password}) => {
   });
 });
 
-Cypress.Commands.add("createPost", ({title, author}) => {
+Cypress.Commands.add("createPost", ({title, author, content}) => {
   cy.request({
     url: "/api/posts",
     method: "POST",
-    body: {title, author},
+    body: {title, author, content},
     headers: {
       Authorization: `Bearer ${JSON.parse(localStorage.getItem("loggedBlogappUser")).token}`,
     },
