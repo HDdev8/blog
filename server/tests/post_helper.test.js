@@ -26,8 +26,11 @@ describe("favorite post", () => {
       _id: "5a422b3a1b54a676234d17f9",
       title: "Canonical string reduction",
       author: "Edsger W. Dijkstra",
+      content:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla posuere id lectus eu faucibus",
       url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
       likes: 12,
+      user: "644cb113a96739b67aa4474e",
       __v: 0,
     });
   });
@@ -37,8 +40,8 @@ describe("most posts", () => {
   test("author with the most posts, and number of posts", () => {
     const result = postHelper.mostPosts(postHelper.posts);
     expect(result).toEqual({
-      author: "Robert C. Martin",
-      posts: 3,
+      author: "Edsger W. Dijkstra",
+      posts: 2,
     });
   });
 });

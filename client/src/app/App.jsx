@@ -1,30 +1,22 @@
-/* eslint-disable import/no-unresolved */
-/* eslint-disable no-nested-ternary */
 import {useEffect} from "react";
-import {useSelector, useDispatch} from "react-redux";
 import {ThemeProvider, createTheme} from "@mui/material/styles";
+import {useDispatch} from "react-redux";
 import {CssBaseline, Container} from "@mui/material";
 import {Routes, Route, useMatch} from "react-router-dom";
-import {
-  useGetPostsQuery,
-  useGetPostByIdQuery,
-  useGetUsersQuery,
-  useGetUserByIdQuery,
-  useAddNewPostMutation,
-  useEditPostMutation,
-  useAddLikeMutation,
-} from "../slices/apiSlice";
-import {filterPost} from "../common/components/filter/filterSlice";
-import {retrieveUser} from "../slices/userSlice";
-import Home from "../common/components/home/Home";
-import SignIn from "../features/signin/SignIn";
-import SignUp from "../features/signup/SignUp";
+import {useGetPostsQuery, useGetUsersQuery} from "../slices/apiSlice";
+import {filterPost} from "../slices/filterSlice";
+import {setLocalUser, clearUserState} from "../slices/userSlice";
+import Home from "../components/home/Home";
+import SignIn from "../features/signIn/SignIn";
+import SignUp from "../features/signUp/SignUp";
 import Post from "../features/posts/Post";
 import Users from "../features/users/Users";
 import User from "../features/users/User";
-import Notification from "../common/components/notifications/Notification";
-import Footer from "../common/components/footer/Footer";
-import NavBar from "../common/components/nav/NavBar";
+import Notification from "../components/notification/Notification";
+import Footer from "../components/footer/Footer";
+import NavBar from "../components/nav/NavBar";
+import parseJwt from "../utils/parseJwt";
+import {fromTimestamp, currentTime} from "../utils/time";
 
 const theme = createTheme();
 
@@ -34,7 +26,7 @@ const App = () => {
   const postMatch = useMatch("/api/posts/:id");
   const userMatch = useMatch("/api/users/:id");
 
-  const {data: posts} = useGetPostsQuery();
+  const {data: allPosts} = useGetPostsQuery();
   const {data: allUsers} = useGetUsersQuery();
 
   useEffect(() => {
@@ -44,11 +36,14 @@ const App = () => {
   useEffect(() => {
     if (loggedUserJSON) {
       const loggedUser = JSON.parse(loggedUserJSON);
-      retrieveUser(dispatch, loggedUser);
+      const jwtToken = parseJwt(loggedUser.token);
+      const expiry = fromTimestamp(jwtToken.exp);
+      const timeNow = currentTime();
+      timeNow < expiry ? setLocalUser(dispatch, loggedUser) : clearUserState(dispatch);
     }
   }, [dispatch, loggedUserJSON]);
 
-  const matchedPost = postMatch ? posts.find((p) => p.id === postMatch.params.id) : null;
+  const matchedPost = postMatch ? allPosts.find((p) => p.id === postMatch.params.id) : null;
   const matchedUser = userMatch ? allUsers.find((u) => u.id === userMatch.params.id) : null;
 
   return (

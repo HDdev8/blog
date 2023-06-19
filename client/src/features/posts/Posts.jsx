@@ -1,20 +1,20 @@
 import {useState, useMemo} from "react";
 import {useSelector} from "react-redux";
 import {Grid, Typography, Tooltip, Button} from "@mui/material";
-import SortDown from "../../common/icons/SortDown";
-import SortUp from "../../common/icons/SortUp";
+import SortDown from "./icons/SortDown";
+import SortUp from "./icons/SortUp";
 import Post from "./Post";
-import sortData from "../../common/utils/sortData";
-import filterData from "../../common/utils/filterData";
+import sortData from "./utils/sortData";
+import filterData from "./utils/filterData";
 import {useGetPostsQuery} from "../../slices/apiSlice";
-import {selectFilter} from "../../common/components/filter/filterSlice";
+import {selectFilter} from "../../slices/filterSlice";
 
 const Posts = () => {
   const [isSorted, setIsSorted] = useState(false);
-  const {data: posts, isError, isLoading} = useGetPostsQuery();
+  const {data: allPosts, isError, isLoading} = useGetPostsQuery();
   const filter = useSelector(selectFilter);
 
-  const sortedPosts = useMemo(() => sortData(posts, "likes", isSorted), [isSorted, posts]);
+  const sortedPosts = useMemo(() => sortData(allPosts, "likes", isSorted), [isSorted, allPosts]);
   const filteredPosts = useMemo(
     () => filterData(sortedPosts, "title", filter),
     [sortedPosts, filter]
@@ -43,7 +43,7 @@ const Posts = () => {
         <>Oh no, there was an error</>
       ) : isLoading ? (
         <>Loading...</>
-      ) : posts ? (
+      ) : allPosts ? (
         <Grid container spacing={4}>
           {filteredList.map((post) => (
             <Post key={post.id} post={post} />

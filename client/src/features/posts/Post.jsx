@@ -1,58 +1,38 @@
 import {useState} from "react";
 import {useSelector, useDispatch} from "react-redux";
-import {Grid, CardActionArea, Card, CardContent, Typography, Button, Tooltip} from "@mui/material";
-import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
+import {Grid, CardActionArea, Card, CardContent, Typography, Button} from "@mui/material";
 import PropTypes from "prop-types";
-import {Link, useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
+import {errorNotification, successNotification} from "../../slices/notificationSlice";
 import {
-  errorNotification,
-  successNotification,
-} from "../../common/components/notifications/notificationSlice";
-import {
-  useAddLikeMutation,
-  useAddNewPostMutation,
-  useAddNewUserMutation,
-  useAddReactionMutation,
-  useEditPostMutation,
-  useGetPostByIdQuery,
-  useGetPostsQuery,
   useGetUserByIdQuery,
-  useGetUsersQuery,
-  useUpdateThePostMutation,
-  useDeleteThePostMutation,
-  // setToken,
+  useUpdatePostMutation,
+  useDeletePostMutation,
 } from "../../slices/apiSlice";
-import {selectCurrentUser, selectAllUsers, selectCurrentUserToken} from "../../slices/userSlice";
-import HeartBadge from "../../common/badges/HeartBadge";
-import {useUserAuth} from "../../slices/useUserAuth";
+import {selectCurrentUser} from "../../slices/userSlice";
+import HeartBadge from "./badges/HeartBadge";
 
-const PostPost = (props) => {
+const Post = (props) => {
   const [visible, setVisible] = useState(false);
   const {post} = props;
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const params = useParams();
   const currentUser = useSelector(selectCurrentUser);
-  const token = useSelector(selectCurrentUserToken);
-  const auth = useUserAuth();
-  console.log("PostPost currentUser", currentUser);
-  console.log("PostPost token", token);
-  console.log("PostPost useUserAuth auth", auth);
-  let config;
-  // const config = {
-  //   headers: {Authorization: token},
-  // };
-
-  const [updateThePost, {isLoading}] = useUpdateThePostMutation();
-  const [deleteThePost, {isLoading: isDeleting}] = useDeleteThePostMutation();
-
   const {data: postAuthor} = useGetUserByIdQuery(post.user.id);
 
-  // const {data: onePost} = useGetPostByIdQuery(post.id);
-  // const [editPost, {isLoading}] = useEditPostMutation();
-  // const [updatePost, {isLoading}] = useEditPostMutation();
-  // const [updatePost, {isLoading}] = useAddLikeMutation();
+  const [updatePost] = useUpdatePostMutation();
+  const [deletePost] = useDeletePostMutation();
+
+  const hideWhenVisible = {display: visible ? "none" : ""};
+  const showWhenVisible = {display: visible ? "" : "none"};
+  const titleField = `${post.title}`;
+  const contentField = `${post.content}`;
+  const urlField = `${post.url}`;
+  const likesField = post.likes;
+  const showLabel = `Continue reading...`;
+  const hideLabel = `Hide`;
+  const deleteLabel = `Delete`;
 
   const toggleVisibility = (e) => {
     e.preventDefault();
@@ -61,24 +41,13 @@ const PostPost = (props) => {
 
   const upvote = async (e, p) => {
     e.preventDefault();
-    // if (token) {
-    //   setToken(token);
-    // }
-    // if (!isLoading) {
-    if (auth) {
-      config = {
-        headers: {Authorization: token},
-      };
+    if (p) {
       try {
         const postObject = {
           ...p,
           likes: p.likes + 1,
         };
-        const {id} = post;
-        // await updatePost(postObject);
-        await updateThePost({id, config, postObject}).unwrap();
-        // await updatePost(post);
-        // await updatePost(dispatch, postObject);
+        await updatePost(postObject).unwrap();
         successNotification(dispatch, `You liked "${postObject.title}"!`);
       } catch (exception) {
         errorNotification(dispatch, `You must be signed in to like a post`);
@@ -88,26 +57,16 @@ const PostPost = (props) => {
 
   const deletePostEntry = async (e, p) => {
     e.preventDefault();
-    try {
-      // await removePost(dispatch, post);
-      deleteThePost(p.id).then(() => navigate("/posts"));
-      successNotification(dispatch, `${p.title} was deleted`);
-    } catch (exception) {
-      errorNotification(dispatch, exception);
+    if (p) {
+      try {
+        await deletePost(p).unwrap();
+        navigate("/");
+        successNotification(dispatch, `${p.title} was deleted`);
+      } catch (exception) {
+        errorNotification(dispatch, exception);
+      }
     }
   };
-
-  const hideWhenVisible = {display: visible ? "none" : ""};
-  const showWhenVisible = {display: visible ? "" : "none"};
-
-  const titleField = `${post.title}`;
-  const contentField = `${post.content}`;
-  const urlField = `${post.url}`;
-  const likesField = post.likes;
-
-  const showLabel = `Continue reading...`;
-  const hideLabel = `Hide`;
-  const deleteLabel = `Delete`;
 
   if (!post) {
     navigate("/");
@@ -116,7 +75,7 @@ const PostPost = (props) => {
   if (post && postAuthor) {
     return (
       <Grid item xs={12} md={12}>
-        <CardActionArea>
+        <CardActionArea disableTouchRipple={true} component="div">
           <Card sx={{display: "flex"}}>
             <CardContent sx={hideWhenVisible}>
               <Typography component="h5" variant="h5">
@@ -132,7 +91,12 @@ const PostPost = (props) => {
               </Typography>
               <Typography variant="subtitle1" color="text.secondary" gutterBottom>
                 by {""}
-                <Typography component={Link} to={`/api/users/${postAuthor.id}`}>
+                <Typography
+                  variant="subtitle1"
+                  color="text.secondary"
+                  component={Link}
+                  gutterBottom
+                  to={`/api/users/${postAuthor.id}`}>
                   {postAuthor.username}
                 </Typography>
               </Typography>
@@ -154,7 +118,7 @@ const PostPost = (props) => {
                 onClick={toggleVisibility}>
                 {hideLabel}
               </Typography>
-              {currentUser && currentUser.username === postAuthor ? (
+              {currentUser && currentUser.username === postAuthor.username ? (
                 <Button size="small" variant="outlined" onClick={(e) => deletePostEntry(e, post)}>
                   {deleteLabel}
                 </Button>
@@ -169,7 +133,7 @@ const PostPost = (props) => {
   }
 };
 
-PostPost.propTypes = {
+Post.propTypes = {
   post: PropTypes.shape({
     title: PropTypes.string.isRequired,
     author: PropTypes.string.isRequired,
@@ -180,4 +144,4 @@ PostPost.propTypes = {
   }).isRequired,
 };
 
-export default PostPost;
+export default Post;

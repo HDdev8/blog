@@ -25,6 +25,17 @@ coverage
 coverage/
 *.lcov
 
+# Cypress
+cypress.config.*
+/cypress
+cypress
+cypress/
+
+# testing, other
+src/app/*.test.*
+src/components/postForm/*.test.*
+src/features/posts/*.test.*
+
 # nyc test coverage
 .nyc_output
 
@@ -95,6 +106,7 @@ out
 # Nuxt.js build / generate output
 .nuxt
 # dist
+# build
 
 # Gatsby files
 .cache/

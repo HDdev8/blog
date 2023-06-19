@@ -4,6 +4,5 @@ Authorization: Bearer <token>
 
 {
     "username": "username",
-    "name": "name",
     "password": "password"
 }

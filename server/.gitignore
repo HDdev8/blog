@@ -25,6 +25,11 @@ coverage
 coverage/
 *.lcov
 
+# testing, other
+/tests
+tests
+tests/
+
 # nyc test coverage
 .nyc_output
 

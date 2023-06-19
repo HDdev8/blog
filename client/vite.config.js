@@ -5,13 +5,20 @@ import svgr from "vite-plugin-svgr";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), svgr()],
+  server: {
+    open: true,
+  },
+  build: {
+    outDir: "build",
+  },
   test: {
     globals: true,
     environment: "jsdom",
     setupFiles: "./tests/setup.js",
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "html"],
+      exclude: ["node_modules/", "./tests/setup.js"],
+    },
   },
-  coverage: {
-    provider: "c8",
-  },
-  optimizeDeps: {},
 });

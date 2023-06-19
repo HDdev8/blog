@@ -8,9 +8,11 @@ POST http://localhost:3001/api/posts
 Content-Type: application/json
 Authorization: Bearer <token>
 
- {
- "title": "test title"
- }
+{
+ "title": "test title",
+ "author": "testuser",
+ "content": "In semper ac ligula vitae dictum. Nunc pellentesque egestas vestibulum. Aenean facilisis mi at vehicula dapibus. Sed ac vestibulum nisi. Nullam nec dictum elit. Aliquam erat volutpat. Donec aliquam vehicula tellus, ut sodales ex. Nam sed ultricies magna, non accumsan ipsum. Sed tellus lacus, dapibus eu urna sit amet, lobortis hendrerit augue. Proin augue quam, facilisis nec neque aliquet, ullamcorper dignissim dui. Suspendisse ornare augue eget ante cursus gravida. Quisque finibus tincidunt dapibus. Nulla vehicula enim id lectus porttitor semper."
+}
 
 ###
 PUT http://localhost:3001/api/posts/id

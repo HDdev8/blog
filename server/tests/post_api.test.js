@@ -13,8 +13,9 @@ const User = require("../models/user");
 let currentUser;
 let token;
 let decodedToken;
-let postsAtStart;
-let postsAtEnd;
+// let postsAtStart;
+// let postsAtStart;
+// let postsAtEnd;
 let postToDelete;
 let firstPost;
 let firstUser;
@@ -38,7 +39,7 @@ beforeEach(async () => {
     username: "root",
     password: "password",
   };
-  postsAtStart = await postHelper.posts1;
+  let postsAtStart = await postHelper.threePostList;
   currentUser = await api.post("/api/login").send(user);
   token = currentUser._body.token;
   header = {
@@ -53,9 +54,9 @@ beforeEach(async () => {
   const users = await User.find({});
   firstUser = users[0];
   const id = firstUser._id;
-  console.log(id);
+
   // const id = "644cb72b5f9701aa34084408"
-  const postObjects = await Post.insertMany(postHelper.posts1);
+  const postObjects = await Post.insertMany(postHelper.threePostList);
   for (let post of postObjects) {
     let postObject = new Post({
       title: post.title,
@@ -69,12 +70,11 @@ beforeEach(async () => {
   }
 });
 
-describe("GET requests", () => {
-  test("Posts are returned as JSON", async () => {
-    await api
-      .get("/api/posts")
-      .expect(200)
-      .expect("Content-Type", /application\/json/);
+describe("GET /api/posts", () => {
+  it("Returns posts as JSON", async () => {
+    const res = await api.get("/api/posts");
+    expect(res.status).toEqual(200);
+    expect(res.headers["content-type"]).toMatch("application/json");
   }, 10000);
 
   test("All posts are returned", async () => {
@@ -83,81 +83,80 @@ describe("GET requests", () => {
   });
 });
 
-describe("POST", () => {
-  test("Adding new posts", async () => {
-    // postsAtStart = await helper.postsInDb();
+describe("POST /api/posts", () => {
+  test("Adding new posts with token", async () => {
+    let postsAtStart = await helper.postsInDb();
+
     const newPost = {
       title: "another test entry",
       author: "root",
+      content: "test content",
       likes: 180,
       user: "644cb72b5f9701aa34084408",
     };
-    await api
-      .post("/api/posts")
-      .send(newPost)
-      .expect(200)
-      .set(header)
-      .expect("Content-Type", /application\/json/);
-    // const postsAtEnd = await helper.postsInDb();
-    postsAtEnd = postsAtStart;
+
+    const res = await api.post("/api/posts").send(newPost).set(header);
+    expect(res.status).toEqual(200);
+    expect(res.headers["content-type"]).toMatch("application/json");
+
+    let postsAtEnd = await helper.postsInDb();
     expect(postsAtEnd).toHaveLength(postsAtStart.length + 1);
     const contents = postsAtEnd.map((res) => res.title);
     expect(contents).toContain("another test entry");
   }, 10000);
 
-  // would require second user
-  test("Adding post without token", async () => {
+  test("Adding new posts without a token", async () => {
+    let postsAtStart = await helper.postsInDb();
+
     const newPost = {
       title: "post without token",
       author: "root",
+      content: "more test content",
       likes: 118,
       user: "644cb9adcb8b08262a1adcb8",
     };
-    await api
-      .post("/api/posts")
-      .send(newPost)
-      .expect(40111)
-      .set(token)
-      .expect("Content-Type", /application\/json/);
-    postsAtEnd = postsAtStart;
+
+    const res = await api.post("/api/posts").send(newPost);
+    expect(res.status).toEqual(400);
+
+    let postsAtEnd = await helper.postsInDb();
     expect(postsAtEnd).toHaveLength(postsAtStart.length);
   }, 10000);
 
-  test("Adding new post without token", async () => {
-    const newPost = {
-      title: "A test without a token",
-      author: "root",
-      likes: 108,
-      user: "644cb9adcb8b08262a1adcb8",
-    };
-    await api
-      .post("/api/posts")
-      .send(newPost)
-      .expect(400)
-      .expect("Content-Type", /application\/json/);
-    postsAtEnd = postsAtStart;
-    expect(postsAtEnd).toHaveLength(postsAtStart.length);
-    const contents = postsAtEnd.map((res) => res.title);
-    expect(contents).not.toContain("A test without a token");
-  }, 10000);
+  test("Adding new posts without a title", async () => {
+    let postsAtStart = await helper.postsInDb();
 
-  test("Posts without a title", async () => {
-    // postsAtStart = await helper.postsInDb();
     const newPost = {
       author: "root",
+      content: "more test content",
+      url: "",
       likes: 1008,
       user: "644cb9adcb8b08262a1adcb8",
     };
-    await api
-      .post("/api/posts")
-      .send(newPost)
-      .expect(400)
-      .set(header)
-      .expect("Content-Type", /application\/json/);
-    // const postsAtEnd = await helper.postsInDb();
-    postsAtEnd = postsAtStart;
+
+    const res = await api.post("/api/posts").send(newPost).set(header);
+    expect(res.status).toEqual(400);
+
+    let postsAtEnd = await helper.postsInDb();
     expect(postsAtEnd).toHaveLength(postsAtStart.length);
   });
+
+  // test("Adding new posts without content", async () => {
+  //   let postsAtStart = await helper.postsInDb();
+
+  //   const newPost = {
+  //     title: "a title",
+  //     author: "root",
+  //     url: "",
+  //     likes: 1008,
+  //     user: "644cb9adcb8b08262a1adcb8",
+  //   };
+
+  //   const res = await api.post("/api/posts").send(newPost).set(header);
+  //   expect(res.status).toEqual(400);
+  //   let postsAtEnd = await helper.postsInDb();
+  //   expect(postsAtEnd).toHaveLength(postsAtStart.length);
+  // }, 10000);
 });
 
 describe("DELETE", () => {

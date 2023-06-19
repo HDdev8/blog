@@ -2,10 +2,7 @@ import {Avatar, Button, TextField, Grid, Box, Typography, Container} from "@mui/
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import {useDispatch} from "react-redux";
 import {useNavigate, Link} from "react-router-dom";
-import {
-  errorNotification,
-  successNotification,
-} from "../../common/components/notifications/notificationSlice";
+import {errorNotification, successNotification} from "../../slices/notificationSlice";
 import {useAddNewUserMutation} from "../../slices/apiSlice";
 
 const SignUp = () => {

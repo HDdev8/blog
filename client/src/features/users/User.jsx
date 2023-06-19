@@ -1,26 +1,12 @@
 import {useNavigate, Link} from "react-router-dom";
-import {useSelector} from "react-redux";
-import {useEffect, useMemo} from "react";
+import {useEffect} from "react";
 import {Card, CardContent, Typography} from "@mui/material";
-import {
-  useGetPostsQuery,
-  useGetPostByIdQuery,
-  useGetUsersQuery,
-  useGetUserByIdQuery,
-  useAddNewPostMutation,
-  useEditPostMutation,
-  useAddLikeMutation,
-} from "../../slices/apiSlice";
-import {createSelector} from "@reduxjs/toolkit";
+import {useGetPostsQuery} from "../../slices/apiSlice";
 
 const User = (props) => {
   const {user} = props;
   const navigate = useNavigate();
-
   const {data: allPosts} = useGetPostsQuery();
-
-  /* Check this out in RTK 8 docs */
-  // const user = useSelector((state) => selectUserById(state, userId));
 
   useEffect(() => {
     if (!user) {
@@ -28,26 +14,10 @@ const User = (props) => {
     }
   }, [navigate, user]);
 
-  // const selectPostsForUser = useMemo(() => {
-  //   const emptyArray = [];
-  //   return createSelector(
-  //     (res) => res.data,
-  //     (res, userId) => userId,
-  //     (data, userId) => data?.filter((post) => post.user === userId) ?? emptyArray
-  //   );
-  // }, []);
-
-  // const {postsForUser} = useGetPostsQuery(undefined, {
-  //   selectFromResult: (result) => ({...result, postsForUser: selectPostsForUser(result, userId)}),
-  // });
-
-  // const {data: post} = useGetPostByIdQuery();
-
-  const postById = (id) => allPosts.find((p) => p.id === id);
-  const mappedPosts = user.posts.map((post) => postById(post));
-  // const mappedPosts = user.posts.map((post) => post);
-
   if (user && allPosts) {
+    const postById = (id) => allPosts.find((p) => p.id === id);
+    const mappedPosts = user.posts.map((post) => postById(post));
+
     return (
       <Card sx={{maxWidth: "100%", margin: "1rem", wordWrap: "break-word"}}>
         <CardContent>

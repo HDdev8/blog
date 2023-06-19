@@ -1,27 +1,16 @@
 import {Avatar, Button, TextField, Grid, Box, Typography, Container} from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import {useNavigate, Link} from "react-router-dom";
-import {
-  errorNotification,
-  successNotification,
-} from "../../common/components/notifications/notificationSlice";
-import {
-  useSetUserMutation,
-  useSetTokenMutation,
-  useLoginMutation,
-  useProtectedMutation,
-} from "../../slices/apiSlice";
-import {setUser, setCredentials} from "../../slices/userSlice";
+import {errorNotification, successNotification} from "../../slices/notificationSlice";
+import {useSignInMutation} from "../../slices/apiSlice";
+import {setUserState} from "../../slices/userSlice";
 
-/* setUser and setCredentials are the same */
-/* useSetUserMutation and useLoginMutation are the same */
 const SignIn = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [setUserMute, {isLoading}] = useSetUserMutation();
-  const [setNewToken] = useSetTokenMutation();
+  const [signIn, {isLoading}] = useSignInMutation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,13 +20,9 @@ const SignIn = () => {
     const canSubmit = [username, password].every(Boolean) && !isLoading;
     if (canSubmit) {
       try {
-        const user = await setUserMute({username, password}).unwrap();
+        const user = await signIn({username, password}).unwrap();
         if (user) {
-          // await setToken(user.token);
-          setUser(user);
-          // await setToken(user.token);
-          // await setNewToken(user.token);
-          window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
+          setUserState(dispatch, user);
           await successNotification(dispatch, `${username} has logged in!`);
           navigate("/");
         }

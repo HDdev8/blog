@@ -2,12 +2,14 @@
   "env": {
     "browser": true,
     "es2021": true,
-    "node": true
+    "node": true,
+    "cypress/globals": true
   },
   "extends": [
     "eslint:recommended",
     "plugin:import/recommended",
     "plugin:cypress/recommended",
+    "plugin:vitest/recommended",
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
     "plugin:jsx-a11y/recommended",
