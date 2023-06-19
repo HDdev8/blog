@@ -27,6 +27,7 @@ coverage/
 
 # Cypress
 cypress.config.*
+cypress.*.*
 /cypress
 cypress
 cypress/
