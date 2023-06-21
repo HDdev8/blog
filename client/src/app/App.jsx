@@ -39,8 +39,11 @@ const App = () => {
   }, [dispatch, loggedUserJSON]);
 
 
-  const postMatch = useMatch("/api/posts/:id");
-  const userMatch = useMatch("/api/users/:id");
+  // const postMatch = useMatch("/api/posts/:id");
+  // const userMatch = useMatch("/api/users/:id");
+
+    const postMatch = useMatch("/posts/:id");
+  const userMatch = useMatch("/users/:id");
 
   // const matchedPost = postMatch ? allPosts.find((p) => p.id === postMatch.params.id) : null;
   // const matchedUser = userMatch ? allUsers.find((u) => u.id === userMatch.params.id) : null;
@@ -60,11 +63,16 @@ const App = () => {
         <Container component="main" sx={{display: "flex", flexDirection: "column"}}>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/api/posts" element={<Posts />} />
+            {/* <Route path="/api/posts" element={<Posts />} />
             <Route path="/api/posts/:id" element={postMatch && <Post />} />
             <Route path="/api/users" element={<Users />} />
             <Route path="/api/users/:id" element={userMatch && <User />} />
-            <Route path="/api/login" element={<SignIn />} />
+            <Route path="/api/login" element={<SignIn />} /> */}
+            <Route path="/posts" element={<Posts />} />
+            <Route path="/posts/:id" element={postMatch && <Post />} />
+            <Route path="/users" element={<Users />} />
+            <Route path="/users/:id" element={userMatch && <User />} />
+            <Route path="/login" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
           </Routes>
           <Notification />
