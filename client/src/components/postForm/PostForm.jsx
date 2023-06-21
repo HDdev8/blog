@@ -38,12 +38,12 @@ const PostForm = () => {
       author: currentUser.username,
     };
     try {
-      await addNewPost(postObject);
+      const newPost = await addNewPost(postObject).unwrap();
       setNewTitle("");
       setNewContent("");
-      successNotification(dispatch, `You created a new post: "${postObject.title}"`);
-    } catch (exception) {
-      errorNotification(dispatch, exception.response.data.error);
+      successNotification(dispatch, `You created a new post: "${newPost.title}"`);
+    } catch (error) {
+      errorNotification(dispatch, `Missing title or content`);
     }
   };
 

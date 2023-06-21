@@ -1,20 +1,16 @@
 import {Box, Badge, Tooltip} from "@mui/material";
 import {styled} from "@mui/material/styles";
-import {red, pink, grey} from "@mui/material/colors";
 import Heart from "./Heart";
-
-const pinkA200 = pink["A200"];
-const pinkA300 = pink["A300"];
-const redA400 = red["A400"];
-const grey300 = grey["300"];
-const grey400 = grey["400"];
 
 const StyledBadge = styled(Badge)(({theme}) => ({
   "& .MuiBadge-badge": {
-    right: -3,
-    top: -3,
-    border: `1px solid ${theme.palette.background.paper}`,
-    padding: "0 4px",
+    right: -2,
+    top: 0,
+    border: `.0156rem solid ${theme.palette.primary.main}`,
+    padding: "0 .25rem",
+    backgroundColor: theme.palette.background.paper,
+    color: theme.palette.primary.main,
+    fontSize: ".85rem",
   },
 }));
 
@@ -32,21 +28,29 @@ const HeartBadge = ({handleClick, likes}) => {
           marginRight: 4,
         },
       }}>
-      <Box mt={"10px"} mb={"4px"}>
+      <Box mt={".625rem"} mb={".25rem"}>
         <Tooltip title="Likes" placement="right">
-          <StyledBadge color="primary" badgeContent={likes} showZero max={999999}>
+          <StyledBadge
+            badgeContent={likes}
+            showZero
+            max={999999}
+            sx={{
+              "&:hover": {
+                transform: "scale(1.2)",
+              },
+              transitionDuration: ".3s",
+            }}>
             <Heart
               onClick={handleClick}
               sx={{
-                fontSize: 36,
-                color: pinkA200,
+                fontSize: 30,
+                color: "#ff4767",
                 "&:hover": {
-                  color: pinkA300,
-                  stroke: grey300,
+                  color: "#ff294e",
                 },
                 "&:active": {
-                  color: redA400,
-                  stroke: grey400,
+                  color: "##ff1e4e",
+                  stroke: "#ff4767",
                 },
               }}
             />

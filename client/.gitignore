@@ -32,6 +32,7 @@ cypress.*.*
 cypress
 cypress/
 
+
 # testing, other
 src/app/*.test.*
 src/components/postForm/*.test.*

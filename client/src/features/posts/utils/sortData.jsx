@@ -11,6 +11,7 @@ const orderBy = (arr, props, orders) =>
   );
 
 const sortData = (items, prop, sortState) => {
+  if (!items) return;
   const sortedAsc = orderBy([...items], [prop], ["asc", "desc"]);
   const sortedDesc = orderBy([...items], [prop], ["desc", "asc"]);
   return sortState === false ? sortedAsc : sortedDesc;

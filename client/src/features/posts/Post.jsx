@@ -1,11 +1,11 @@
 import {useState} from "react";
 import {useSelector, useDispatch} from "react-redux";
 import {Grid, CardActionArea, Card, CardContent, Typography, Button} from "@mui/material";
-import PropTypes from "prop-types";
-import {Link, useNavigate} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {errorNotification, successNotification} from "../../slices/notificationSlice";
 import {
   useGetUserByIdQuery,
+  useGetPostByIdQuery,
   useUpdatePostMutation,
   useDeletePostMutation,
 } from "../../slices/apiSlice";
@@ -14,25 +14,28 @@ import HeartBadge from "./badges/HeartBadge";
 
 const Post = (props) => {
   const [visible, setVisible] = useState(false);
-  const {post} = props;
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const params = useParams();
   const currentUser = useSelector(selectCurrentUser);
-  const {data: postAuthor} = useGetUserByIdQuery(post.user.id);
-
   const [updatePost] = useUpdatePostMutation();
   const [deletePost] = useDeletePostMutation();
+  const {post} = props;
 
-  const hideWhenVisible = {display: visible ? "none" : ""};
-  const showWhenVisible = {display: visible ? "" : "none"};
-  const titleField = `${post.title}`;
-  const contentField = `${post.content}`;
-  const urlField = `${post.url}`;
-  const likesField = post.likes;
-  const showLabel = `Continue reading...`;
-  const hideLabel = `Hide`;
-  const deleteLabel = `Delete`;
+  let postId = null;
+  let userId;
+
+  post ? (postId = post.id) && (userId = post.user.id) : (postId = params.id);
+  const {data: currentPost, isLoading: postLoading} = useGetPostByIdQuery(postId);
+
+  if (!post && currentPost) {
+    userId = currentPost.user;
+  }
+  const {data: postAuthor} = useGetUserByIdQuery(userId);
+
+  if (!currentPost && !postLoading) {
+    navigate("/");
+  }
 
   const toggleVisibility = (e) => {
     e.preventDefault();
@@ -68,11 +71,18 @@ const Post = (props) => {
     }
   };
 
-  if (!post) {
-    navigate("/");
-  }
+  const hideWhenVisible = {display: visible ? "none" : ""};
+  const showWhenVisible = {display: visible ? "" : "none"};
+  const showLabel = `Continue reading...`;
+  const hideLabel = `Hide`;
+  const deleteLabel = `Delete`;
 
-  if (post && postAuthor) {
+  if (currentPost && postAuthor && !postLoading) {
+    const titleField = `${currentPost.title}`;
+    const contentField = `${currentPost.content}`;
+    const urlField = `${currentPost.url}`;
+    const likesField = currentPost.likes;
+
     return (
       <Grid item xs={12} md={12}>
         <CardActionArea disableTouchRipple={true} component="div">
@@ -81,6 +91,22 @@ const Post = (props) => {
               <Typography component="h5" variant="h5">
                 {titleField}
               </Typography>
+              <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+                by {""}
+                <Typography
+                  variant="subtitle1"
+                  color="text.secondary"
+                  component={Link}
+                  gutterBottom
+                  to={`/api/users/${postAuthor.id}`}>
+                  {postAuthor.username}
+                </Typography>
+              </Typography>
+              <HeartBadge
+                className="heartBadge"
+                handleClick={(e) => upvote(e, currentPost)}
+                likes={likesField}
+              />
               <Typography variant="subtitle1" color="primary" onClick={toggleVisibility}>
                 {showLabel}
               </Typography>
@@ -100,17 +126,17 @@ const Post = (props) => {
                   {postAuthor.username}
                 </Typography>
               </Typography>
+              <HeartBadge
+                className="heartBadge"
+                handleClick={(e) => upvote(e, currentPost)}
+                likes={likesField}
+              />
               <Typography variant="body1" gutterBottom>
                 {contentField}
               </Typography>
               <Typography variant="body1" gutterBottom>
                 {urlField}
               </Typography>
-              <HeartBadge
-                className="heartBadge"
-                handleClick={(e) => upvote(e, post)}
-                likes={likesField}
-              />
               <Typography
                 gutterBottom
                 variant="subtitle1"
@@ -119,7 +145,10 @@ const Post = (props) => {
                 {hideLabel}
               </Typography>
               {currentUser && currentUser.username === postAuthor.username ? (
-                <Button size="small" variant="outlined" onClick={(e) => deletePostEntry(e, post)}>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  onClick={(e) => deletePostEntry(e, currentPost)}>
                   {deleteLabel}
                 </Button>
               ) : (
@@ -131,17 +160,6 @@ const Post = (props) => {
       </Grid>
     );
   }
-};
-
-Post.propTypes = {
-  post: PropTypes.shape({
-    title: PropTypes.string.isRequired,
-    author: PropTypes.string.isRequired,
-    content: PropTypes.string.isRequired,
-    url: PropTypes.string.isRequired,
-    likes: PropTypes.number.isRequired,
-    id: PropTypes.string.isRequired,
-  }).isRequired,
 };
 
 export default Post;

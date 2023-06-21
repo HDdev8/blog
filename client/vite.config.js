@@ -8,9 +8,6 @@ export default defineConfig({
   server: {
     open: true,
   },
-  build: {
-    outDir: "build",
-  },
   test: {
     globals: true,
     environment: "jsdom",

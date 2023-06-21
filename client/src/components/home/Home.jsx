@@ -4,12 +4,9 @@ import PostForm from "../postForm/PostForm";
 import Filter from "../filter/Filter";
 import {selectCurrentUser} from "../../slices/userSlice";
 import Posts from "../../features/posts/Posts";
-import {useGetPostsQuery} from "../../slices/apiSlice";
 
 const Home = () => {
   const currentUser = useSelector(selectCurrentUser);
-
-  const {data: allPosts, isError, isLoading} = useGetPostsQuery();
 
   return (
     <>
@@ -19,13 +16,7 @@ const Home = () => {
           <Filter />
         </Box>
       </Grid>
-      {isError ? (
-        <>Oh no, there was an error</>
-      ) : isLoading ? (
-        <>Loading...</>
-      ) : allPosts ? (
-        <Posts />
-      ) : null}
+      <Posts />
     </>
   );
 };

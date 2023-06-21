@@ -7,21 +7,21 @@ import SignedIn from "./signedIn/SignedIn";
 import SignedOut from "./signedOut/SignedOut";
 
 const UserMenu = () => {
-  const [anchorElUser, setAnchorElUser] = useState(null);
+  const [anchorElement, setAnchorElement] = useState(null);
   const currentUser = useSelector(selectCurrentUser);
 
-  const handleOpenUserMenu = (e) => {
-    setAnchorElUser(e.currentTarget);
+  const handleOpen = (e) => {
+    setAnchorElement(e.currentTarget);
   };
 
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
+  const handleClose = () => {
+    setAnchorElement(null);
   };
 
   return (
     <Box sx={{flexGrow: 0}} className="userMenu">
-      <Tooltip title="Open settings">
-        <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
+      <Tooltip title="Open settings" placement="left">
+        <IconButton onClick={handleOpen} sx={{p: 0}}>
           {(!currentUser.username && <Avatar />) ||
             (currentUser.username && <AvatarLetterBackground />)}
         </IconButton>
@@ -29,7 +29,7 @@ const UserMenu = () => {
       <Menu
         sx={{mt: "45px"}}
         id="menu-appbar"
-        anchorEl={anchorElUser}
+        anchorEl={anchorElement}
         anchorOrigin={{
           vertical: "top",
           horizontal: "right",
@@ -39,10 +39,10 @@ const UserMenu = () => {
           vertical: "top",
           horizontal: "right",
         }}
-        open={Boolean(anchorElUser)}
-        onClose={handleCloseUserMenu}>
-        {(!currentUser.username && <SignedOut handleClose={handleCloseUserMenu} />) ||
-          (currentUser.username && <SignedIn handleClose={handleCloseUserMenu} />)}
+        open={Boolean(anchorElement)}
+        onClose={handleClose}>
+        {(!currentUser.username && <SignedOut handleClose={handleClose} />) ||
+          (currentUser.username && <SignedIn handleClose={handleClose} />)}
       </Menu>
     </Box>
   );

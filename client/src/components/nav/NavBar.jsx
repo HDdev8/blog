@@ -5,25 +5,21 @@ import NavMenuMobile from "./navMenus/NavMenuMobile";
 import UserMenu from "./userMenus/UserMenu";
 
 const NavBar = () => {
-  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElement, setAnchorElement] = useState(null);
 
-  const handleOpenNavMenu = (e) => {
-    setAnchorElNav(e.currentTarget);
+  const handleOpen = (e) => {
+    setAnchorElement(e.currentTarget);
   };
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
+  const handleClose = () => {
+    setAnchorElement(null);
   };
 
   return (
     <Bar position="static" color="inherit" variant="string" sx={{square: false}}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <NavMenuFull
-            handleOpen={handleOpenNavMenu}
-            handleClose={handleCloseNavMenu}
-            anchor={anchorElNav}
-          />
-          <NavMenuMobile handleClose={handleCloseNavMenu} />
+          <NavMenuFull handleOpen={handleOpen} handleClose={handleClose} anchor={anchorElement} />
+          <NavMenuMobile handleClose={handleClose} />
           <UserMenu />
         </Toolbar>
       </Container>

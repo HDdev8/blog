@@ -12,37 +12,45 @@ import {
 import {useGetUsersQuery} from "../../slices/apiSlice";
 
 const Users = () => {
-  const {data: allUsers} = useGetUsersQuery();
+  const {data: allUsers, isError, isLoading} = useGetUsersQuery();
 
-  if (allUsers) {
-    return (
-      <>
-        <Typography component="h5" variant="h6" align="center" noWrap mb={"32px"}>
-          Users
-        </Typography>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
+  return (
+    <>
+      <Typography component="h5" variant="h6" align="center" noWrap mb={"32px"}>
+        Users
+      </Typography>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Users</TableCell>
+              <TableCell>Post List</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {isError ? (
               <TableRow>
-                <TableCell>Users</TableCell>
-                <TableCell>Post List</TableCell>
+                <TableCell>Oh no, there was an error</TableCell>
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {allUsers.map((user) => (
+            ) : isLoading ? (
+              <TableRow>
+                <TableCell>Loading</TableCell>
+              </TableRow>
+            ) : allUsers ? (
+              allUsers.map((user) => (
                 <TableRow key={user.id}>
                   <TableCell>
                     <Link to={`/api/users/${user.id}`}>{user.username}</Link>
                   </TableCell>
                   <TableCell>{user.posts.length}</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </>
-    );
-  }
+              ))
+            ) : null}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </>
+  );
 };
 
 export default Users;

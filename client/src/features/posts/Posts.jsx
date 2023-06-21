@@ -12,15 +12,21 @@ import {selectFilter} from "../../slices/filterSlice";
 const Posts = () => {
   const [isSorted, setIsSorted] = useState(false);
   const {data: allPosts, isError, isLoading} = useGetPostsQuery();
+
   const filter = useSelector(selectFilter);
 
-  const sortedPosts = useMemo(() => sortData(allPosts, "likes", isSorted), [isSorted, allPosts]);
-  const filteredPosts = useMemo(
-    () => filterData(sortedPosts, "title", filter),
-    [sortedPosts, filter]
+
+  const unfilteredPosts = useMemo(
+    () => sortData(allPosts, "likes", isSorted),
+    [isSorted, allPosts]
   );
 
-  const filteredList = !filter ? sortedPosts : filteredPosts;
+  const filteredPosts = useMemo(
+    () => filterData(unfilteredPosts, "title", filter),
+    [unfilteredPosts, filter]
+  );
+
+  const filteredList = !filter ? unfilteredPosts : filteredPosts;
 
   const sortIcon = isSorted === false ? <SortDown /> : <SortUp />;
 
@@ -29,7 +35,7 @@ const Posts = () => {
       <Typography component="h5" variant="h6" align="center" noWrap>
         Posts
       </Typography>
-      <Tooltip title="Sort by likes">
+      <Tooltip title="Sort by likes" placement="left">
         <Button
           style={{alignSelf: "end"}}
           type="button"

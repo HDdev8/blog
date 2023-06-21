@@ -32,4 +32,6 @@ export const errorNotification = async (dispatch, error) => {
   await setTimeout(() => dispatch(clear()), 5000);
 };
 
-export const selectNotifications = (state) => state.notifications;
+export const selectNotification = (state) => state.notifications.notification;
+export const selectNotificationOpen = (state) => state.notifications.open;
+export const selectNotificationError = (state) => state.notifications.error;

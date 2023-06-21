@@ -3,12 +3,11 @@ import {ThemeProvider, createTheme} from "@mui/material/styles";
 import {useDispatch} from "react-redux";
 import {CssBaseline, Container} from "@mui/material";
 import {Routes, Route, useMatch} from "react-router-dom";
-import {useGetPostsQuery, useGetUsersQuery} from "../slices/apiSlice";
-import {filterPost} from "../slices/filterSlice";
 import {setLocalUser, clearUserState} from "../slices/userSlice";
 import Home from "../components/home/Home";
 import SignIn from "../features/signIn/SignIn";
 import SignUp from "../features/signUp/SignUp";
+import Posts from "../features/posts/Posts";
 import Post from "../features/posts/Post";
 import Users from "../features/users/Users";
 import User from "../features/users/User";
@@ -18,20 +17,16 @@ import NavBar from "../components/nav/NavBar";
 import parseJwt from "../utils/parseJwt";
 import {fromTimestamp, currentTime} from "../utils/time";
 
-const theme = createTheme();
+const theme = createTheme({
+  palette: {
+    contrastThreshold: 4.5,
+  },
+});
+
 
 const App = () => {
   const dispatch = useDispatch();
   const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
-  const postMatch = useMatch("/api/posts/:id");
-  const userMatch = useMatch("/api/users/:id");
-
-  const {data: allPosts} = useGetPostsQuery();
-  const {data: allUsers} = useGetUsersQuery();
-
-  useEffect(() => {
-    filterPost(dispatch, "");
-  }, [dispatch]);
 
   useEffect(() => {
     if (loggedUserJSON) {
@@ -43,8 +38,13 @@ const App = () => {
     }
   }, [dispatch, loggedUserJSON]);
 
-  const matchedPost = postMatch ? allPosts.find((p) => p.id === postMatch.params.id) : null;
-  const matchedUser = userMatch ? allUsers.find((u) => u.id === userMatch.params.id) : null;
+
+  const postMatch = useMatch("/api/posts/:id");
+  const userMatch = useMatch("/api/users/:id");
+
+  // const matchedPost = postMatch ? allPosts.find((p) => p.id === postMatch.params.id) : null;
+  // const matchedUser = userMatch ? allUsers.find((u) => u.id === userMatch.params.id) : null;
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -60,9 +60,10 @@ const App = () => {
         <Container component="main" sx={{display: "flex", flexDirection: "column"}}>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/api/posts/:id" element={matchedPost && <Post post={matchedPost} />} />
+            <Route path="/api/posts" element={<Posts />} />
+            <Route path="/api/posts/:id" element={postMatch && <Post />} />
             <Route path="/api/users" element={<Users />} />
-            <Route path="/api/users/:id" element={matchedUser && <User user={matchedUser} />} />
+            <Route path="/api/users/:id" element={userMatch && <User />} />
             <Route path="/api/login" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
           </Routes>

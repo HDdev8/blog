@@ -1,37 +1,42 @@
-import {useNavigate, Link} from "react-router-dom";
+import {useNavigate, Link, useParams} from "react-router-dom";
 import {useEffect} from "react";
 import {Card, CardContent, Typography} from "@mui/material";
-import {useGetPostsQuery} from "../../slices/apiSlice";
+import {useGetPostsQuery, useGetUserByIdQuery} from "../../slices/apiSlice";
 
-const User = (props) => {
-  const {user} = props;
+const User = () => {
   const navigate = useNavigate();
+  const params = useParams();
+  const userId = params.id;
+  const {data: queriedUser, isLoading: userLoading} = useGetUserByIdQuery(userId);
   const {data: allPosts} = useGetPostsQuery();
 
   useEffect(() => {
-    if (!user) {
+    if (!queriedUser && !userLoading) {
       navigate("/");
     }
-  }, [navigate, user]);
+  }, [navigate, queriedUser, userLoading]);
 
-  if (user && allPosts) {
-    const postById = (id) => allPosts.find((p) => p.id === id);
-    const mappedPosts = user.posts.map((post) => postById(post));
+  const postById = (id) => allPosts.find((p) => p.id === id);
+
+  if (queriedUser && allPosts) {
+    const mappedPosts = queriedUser.posts.map((post) => postById(post));
+    const filteredPosts = mappedPosts.filter((post) => post !== undefined);
 
     return (
       <Card sx={{maxWidth: "100%", margin: "1rem", wordWrap: "break-word"}}>
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
-            {user.name}
+            {queriedUser.name}
           </Typography>
           <Typography gutterBottom variant="body2" sx={{color: "text.secondary"}}>
-            {user.username}
+            {queriedUser.username}
           </Typography>
-          {mappedPosts.map((post) => (
-            <Typography key={post.id} gutterBottom variant="body2">
-              <Link to={`/api/posts/${post.id}`}>{post.title}</Link>
-            </Typography>
-          ))}
+          {filteredPosts &&
+            filteredPosts.map((post) => (
+              <Typography key={post.id} gutterBottom variant="body2">
+                <Link to={`/api/posts/${post.id}`}>{post.title}</Link>
+              </Typography>
+            ))}
         </CardContent>
       </Card>
     );
