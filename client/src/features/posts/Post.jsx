@@ -13,36 +13,44 @@ import {selectCurrentUser} from "../../slices/userSlice";
 import HeartBadge from "./badges/HeartBadge";
 
 const Post = (props) => {
-  const [visible, setVisible] = useState(false);
-  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const params = useParams();
   const currentUser = useSelector(selectCurrentUser);
   const [updatePost] = useUpdatePostMutation();
   const [deletePost] = useDeletePostMutation();
   const {post} = props;
-
   let postId = null;
-  let userId;
+  let userId = null;
 
-  post ? (postId = post.id) && (userId = post.user.id) : (postId = params.id);
+  if (post) {
+    postId = post.id;
+  }
+  if (!post) {
+    postId = params.id;
+  }
+
   const {data: currentPost, isLoading: postLoading} = useGetPostByIdQuery(postId);
 
+  if (post) {
+    userId = post.user.id;
+  }
   if (!post && currentPost) {
     userId = currentPost.user;
   }
-  const {data: postAuthor} = useGetUserByIdQuery(userId);
-
   if (!currentPost && !postLoading) {
     navigate("/");
   }
 
-  const toggleVisibility = (e) => {
+  const {data: postAuthor} = useGetUserByIdQuery(userId);
+
+  const toggleOpen = (e) => {
     e.preventDefault();
-    setVisible(!visible);
+    setOpen(!open);
   };
 
-  const upvote = async (e, p) => {
+  const likePost = async (e, p) => {
     e.preventDefault();
     if (p) {
       try {
@@ -71,13 +79,13 @@ const Post = (props) => {
     }
   };
 
-  const hideWhenVisible = {display: visible ? "none" : ""};
-  const showWhenVisible = {display: visible ? "" : "none"};
+  const hideWhenOpen = {display: open ? "none" : ""};
+  const showWhenOpen = {display: open ? "" : "none"};
   const showLabel = `Continue reading...`;
   const hideLabel = `Hide`;
   const deleteLabel = `Delete`;
 
-  if (currentPost && postAuthor && !postLoading) {
+  if (currentPost && postAuthor) {
     const titleField = `${currentPost.title}`;
     const contentField = `${currentPost.content}`;
     const urlField = `${currentPost.url}`;
@@ -87,7 +95,7 @@ const Post = (props) => {
       <Grid item xs={12} md={12}>
         <CardActionArea disableTouchRipple={true} component="div">
           <Card sx={{display: "flex"}}>
-            <CardContent sx={hideWhenVisible}>
+            <CardContent sx={hideWhenOpen}>
               <Typography component="h5" variant="h5">
                 {titleField}
               </Typography>
@@ -104,14 +112,14 @@ const Post = (props) => {
               </Typography>
               <HeartBadge
                 className="heartBadge"
-                handleClick={(e) => upvote(e, currentPost)}
+                handleClick={(e) => likePost(e, currentPost)}
                 likes={likesField}
               />
-              <Typography variant="subtitle1" color="primary" onClick={toggleVisibility}>
+              <Typography variant="subtitle1" color="primary" onClick={toggleOpen}>
                 {showLabel}
               </Typography>
             </CardContent>
-            <CardContent sx={showWhenVisible}>
+            <CardContent sx={showWhenOpen}>
               <Typography component="h5" variant="h5">
                 {titleField}
               </Typography>
@@ -128,7 +136,7 @@ const Post = (props) => {
               </Typography>
               <HeartBadge
                 className="heartBadge"
-                handleClick={(e) => upvote(e, currentPost)}
+                handleClick={(e) => likePost(e, currentPost)}
                 likes={likesField}
               />
               <Typography variant="body1" gutterBottom>
@@ -137,11 +145,7 @@ const Post = (props) => {
               <Typography variant="body1" gutterBottom>
                 {urlField}
               </Typography>
-              <Typography
-                gutterBottom
-                variant="subtitle1"
-                color="primary"
-                onClick={toggleVisibility}>
+              <Typography gutterBottom variant="subtitle1" color="primary" onClick={toggleOpen}>
                 {hideLabel}
               </Typography>
               {currentUser && currentUser.username === postAuthor.username ? (

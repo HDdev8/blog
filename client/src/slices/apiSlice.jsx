@@ -1,10 +1,8 @@
 import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 
-
 export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
-    // baseUrl: "http://localhost:3001/api",
     baseUrl: "/api",
     prepareHeaders: (headers, {getState}) => {
       const token = getState().user.currentUser.token;
@@ -17,25 +15,14 @@ export const apiSlice = createApi({
   endpoints: (builder) => ({
     getPosts: builder.query({
       query: () => "/posts",
-      providesTags: (result = [], error, arg) => [
-        "Post",
-        ...result.map(({id}) => ({type: "Post", id})),
-      ],
-    }),
-    getUsers: builder.query({
-      query: () => "/users",
-      providesTags: (result = [], error, arg) => [
-        "User",
-        ...result.map(({id}) => ({type: "User", id})),
-      ],
+      providesTags: (result) =>
+        result
+          ? [...result.map(({id}) => ({type: "Post", id})), {type: "Post", id: "LIST"}]
+          : [{type: "Post", id: "LIST"}],
     }),
     getPostById: builder.query({
       query: (id) => `/posts/${id}`,
       providesTags: (result, error, id) => [{type: "Post", id}],
-    }),
-    getUserById: builder.query({
-      query: (id) => `/users/${id}`,
-      providesTags: (result, error, id) => [{type: "User", id}],
     }),
     addNewPost: builder.mutation({
       query: (initialPost) => ({
@@ -43,15 +30,11 @@ export const apiSlice = createApi({
         method: "POST",
         body: initialPost,
       }),
-      invalidatesTags: ["Post"],
-    }),
-    addNewUser: builder.mutation({
-      query: (newUser) => ({
-        url: "/users",
-        method: "POST",
-        body: newUser,
-      }),
-      invalidatesTags: ["User"],
+      invalidatesTags: [
+        {type: "Post", id: "LIST"},
+        {type: "User", id: "USER_LIST"},
+        {type: "User", id: "LIST"},
+      ],
     }),
     updatePost: builder.mutation({
       query: (patch) => ({
@@ -59,18 +42,6 @@ export const apiSlice = createApi({
         method: "PUT",
         body: patch,
       }),
-      async onQueryStarted(patch, {dispatch, queryFulfilled}) {
-        const patchResult = dispatch(
-          apiSlice.util.updateQueryData("getPostById", patch.id, (draft) => {
-            Object.assign(draft, patch);
-          })
-        );
-        try {
-          await queryFulfilled;
-        } catch {
-          patchResult.undo();
-        }
-      },
       invalidatesTags: (result, error, {id}) => [{type: "Post", id}],
     }),
     deletePost: builder.mutation({
@@ -80,7 +51,41 @@ export const apiSlice = createApi({
           method: "DELETE",
         };
       },
-      invalidatesTags: (result, error, {id}) => [{type: "Post", id}],
+      invalidatesTags: [
+        {type: "Post", id: "LIST"},
+        {type: "User", id: "USER_LIST"},
+        {type: "User", id: "LIST"},
+      ],
+    }),
+    getUsers: builder.query({
+      query: () => "/users",
+      providesTags: (result) =>
+        result
+          ? [...result.map(({id}) => ({type: "User", id})), {type: "User", id: "LIST"}]
+          : [{type: "User", id: "LIST"}],
+    }),
+    getUserById: builder.query({
+      query: (id) => `/users/${id}`,
+      providesTags: (result, error, id) => [
+        {type: "User", id},
+        {type: "User", id: "USER_LIST"},
+      ],
+    }),
+    addNewUser: builder.mutation({
+      query: (newUser) => ({
+        url: "/users",
+        method: "POST",
+        body: newUser,
+      }),
+      invalidatesTags: [{type: "User", id: "LIST"}],
+    }),
+    DeleteUser: builder.mutation({
+      query: (user) => ({
+        url: "/users",
+        method: "DELETE",
+        body: user,
+      }),
+      invalidatesTags: [{type: "User", id: "LIST"}],
     }),
     signIn: builder.mutation({
       query: (userCredentials) => ({

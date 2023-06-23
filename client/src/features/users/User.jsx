@@ -1,5 +1,5 @@
-import {useNavigate, Link, useParams} from "react-router-dom";
 import {useEffect} from "react";
+import {useNavigate, Link, useParams} from "react-router-dom";
 import {Card, CardContent, Typography} from "@mui/material";
 import {useGetPostsQuery, useGetUserByIdQuery} from "../../slices/apiSlice";
 
@@ -7,6 +7,7 @@ const User = () => {
   const navigate = useNavigate();
   const params = useParams();
   const userId = params.id;
+
   const {data: queriedUser, isLoading: userLoading} = useGetUserByIdQuery(userId);
   const {data: allPosts} = useGetPostsQuery();
 

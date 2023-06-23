@@ -14,7 +14,12 @@ const Filter = () => {
     <TextField
       label="Post Search"
       id="post-filter"
-      sx={{mt: 1, mb: 1, ml: 1}}
+      sx={{
+        mt: 1,
+        mb: 1,
+        width: "100%",
+        minWidth: "9.375rem",
+      }}
       size="small"
       onChange={handleFilter}
       InputProps={{

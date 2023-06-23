@@ -6,3 +6,6 @@ Authorization: Bearer <token>
     "username": "username",
     "password": "password"
 }
+
+###
+GET http://localhost:3001/api/login

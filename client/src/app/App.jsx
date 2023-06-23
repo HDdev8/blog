@@ -1,5 +1,5 @@
 import {useEffect} from "react";
-import {ThemeProvider, createTheme} from "@mui/material/styles";
+import {ThemeProvider} from "@mui/material/styles";
 import {useDispatch} from "react-redux";
 import {CssBaseline, Container} from "@mui/material";
 import {Routes, Route, useMatch} from "react-router-dom";
@@ -16,13 +16,7 @@ import Footer from "../components/footer/Footer";
 import NavBar from "../components/nav/NavBar";
 import parseJwt from "../utils/parseJwt";
 import {fromTimestamp, currentTime} from "../utils/time";
-
-const theme = createTheme({
-  palette: {
-    contrastThreshold: 4.5,
-  },
-});
-
+import theme from "./theme";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -34,20 +28,17 @@ const App = () => {
       const jwtToken = parseJwt(loggedUser.token);
       const expiry = fromTimestamp(jwtToken.exp);
       const timeNow = currentTime();
-      timeNow < expiry ? setLocalUser(dispatch, loggedUser) : clearUserState(dispatch);
+      if (timeNow < expiry) {
+        setLocalUser(dispatch, loggedUser);
+      }
+      if (timeNow > expiry) {
+        clearUserState(dispatch);
+      }
     }
   }, [dispatch, loggedUserJSON]);
 
-
   const postMatch = useMatch("/api/posts/:id");
   const userMatch = useMatch("/api/users/:id");
-
-  //   const postMatch = useMatch("/posts/:id");
-  // const userMatch = useMatch("/users/:id");
-
-  // const matchedPost = postMatch ? allPosts.find((p) => p.id === postMatch.params.id) : null;
-  // const matchedUser = userMatch ? allUsers.find((u) => u.id === userMatch.params.id) : null;
-
 
   return (
     <ThemeProvider theme={theme}>
@@ -68,11 +59,6 @@ const App = () => {
             <Route path="/api/users" element={<Users />} />
             <Route path="/api/users/:id" element={userMatch && <User />} />
             <Route path="/api/login" element={<SignIn />} />
-            {/* <Route path="/posts" element={<Posts />} />
-            <Route path="/posts/:id" element={postMatch && <Post />} />
-            <Route path="/users" element={<Users />} />
-            <Route path="/users/:id" element={userMatch && <User />} />
-            <Route path="/login" element={<SignIn />} /> */}
             <Route path="/signup" element={<SignUp />} />
           </Routes>
           <Notification />

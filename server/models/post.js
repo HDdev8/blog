@@ -1,9 +1,13 @@
 const mongoose = require("mongoose");
 
 const postSchema = new mongoose.Schema({
-  title: {type: String, minLength: 1, required: true},
+  title: {
+    type: String,
+    minLength: 1,
+    required: [true, "Must include title"],
+  },
   author: {type: String, default: ""},
-  content: {type: String, minLength: 1, required: true},
+  content: {type: String, minLength: 1, required: [true, "Must include content"]},
   url: {type: String, default: ""},
   likes: {type: Number, default: 0},
   user: {
@@ -21,4 +25,5 @@ postSchema.set("toJSON", {
 });
 
 const Post = mongoose.model("Post", postSchema);
+
 module.exports = Post;

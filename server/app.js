@@ -1,5 +1,4 @@
 const express = require("express");
-// const path = require('path')
 const mongoose = require("mongoose");
 const config = require("./utils/config");
 const app = express();
@@ -26,20 +25,10 @@ mongoose
     logger.error("error connecting to MongoDB:", error.message);
   });
 
-// const buildPath = path.join(__dirname, 'dist')
-
 app.use(helmet());
 app.use(cors());
-// app.use(express.static(buildPath))
 app.use(express.static("dist"));
 app.use(express.json());
-
-
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(buildPath, 'index.html'))
-// })
-
-
 
 app.use(middleware.requestTime);
 app.use(middleware.requestLogger);

@@ -3,6 +3,27 @@ const jwt = require("jsonwebtoken");
 const loginRouter = require("express").Router();
 const User = require("../models/user");
 
+loginRouter.get("/", async (req, res) => {
+  let decodedToken;
+
+  if (!req.token) {
+    return res.status(401).json({
+      error: "not signed in",
+    });
+  }
+  if (req.token) {
+    decodedToken = jwt.verify(req.token, process.env.SECRET);
+  }
+  if (!decodedToken.id) {
+    return res.status(401).json({
+      error: "not signed in",
+    });
+  }
+  if (decodedToken.id) {
+    res.json(decodedToken);
+  }
+});
+
 loginRouter.post("/", async (req, res) => {
   const body = req.body;
   const {username, password} = body;

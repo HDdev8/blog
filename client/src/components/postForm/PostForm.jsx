@@ -43,11 +43,10 @@ const PostForm = () => {
       setNewContent("");
       successNotification(dispatch, `You created a new post: "${newPost.title}"`);
     } catch (error) {
-      errorNotification(dispatch, `Missing title or content`);
+      const errorString = JSON.stringify(error.data.error);
+      errorNotification(dispatch, errorString);
     }
   };
-
-  const labels = {close: "Cancel", open: "Create Post"};
 
   return (
     <FocusTrap open={open} disableAutoFocus disableEnforceFocus>
@@ -60,8 +59,11 @@ const PostForm = () => {
                 m: 1,
                 display: "flex",
                 flexDirection: "column",
+                marginLeft: 0,
               },
             }}
+            width="80%"
+            marginRight={"auto"}
             noValidate
             autoComplete="off"
             onSubmit={onSubmit}>
@@ -73,7 +75,7 @@ const PostForm = () => {
               size="small"
               value={newTitle}
               onChange={handleTitleChange}
-              fullWidth
+              sx={{minWidth: "14.75rem"}}
             />
             <TextField
               label={"Content"}
@@ -85,19 +87,28 @@ const PostForm = () => {
               rows={4}
               value={newContent}
               onChange={handleContentChange}
-              fullWidth
+              sx={{minWidth: "14.75rem"}}
             />
-            <Button type="submit" size="small" variant="outlined">
+            <Button
+              type="submit"
+              size="small"
+              variant="outlined"
+              sx={{minWidth: "6.25rem", maxWidth: "70%"}}>
               Post
             </Button>
-            <Button type="button" size="small" variant="outlined" onClick={handleOpen}>
+            <Button
+              type="button"
+              size="small"
+              variant="outlined"
+              onClick={handleOpen}
+              sx={{minWidth: "6.25rem", maxWidth: "70%"}}>
               Cancel
             </Button>
           </Box>
         )}
         {open === false && (
           <Button type="button" onClick={handleOpen}>
-            {labels.open}
+            Create Post
           </Button>
         )}
       </Stack>
