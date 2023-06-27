@@ -96,7 +96,7 @@ const Post = (props) => {
         <CardActionArea disableTouchRipple={true} component="div">
           <Card sx={{display: "flex"}}>
             <CardContent sx={hideWhenOpen}>
-              <Typography component="h5" variant="h5">
+              <Typography component="h5" variant="h5" sx={{wordBreak: "break-word"}}>
                 {titleField}
               </Typography>
               <Typography variant="subtitle1" color="text.secondary" gutterBottom>
@@ -120,7 +120,7 @@ const Post = (props) => {
               </Typography>
             </CardContent>
             <CardContent sx={showWhenOpen}>
-              <Typography component="h5" variant="h5">
+              <Typography component="h5" variant="h5" sx={{wordBreak: "break-word"}}>
                 {titleField}
               </Typography>
               <Typography variant="subtitle1" color="text.secondary" gutterBottom>
@@ -139,7 +139,7 @@ const Post = (props) => {
                 handleClick={(e) => likePost(e, currentPost)}
                 likes={likesField}
               />
-              <Typography variant="body1" gutterBottom>
+              <Typography variant="body1" sx={{wordBreak: "break-word"}} gutterBottom>
                 {contentField}
               </Typography>
               <Typography variant="body1" gutterBottom>
