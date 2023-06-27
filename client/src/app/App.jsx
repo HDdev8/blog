@@ -44,7 +44,7 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Container
-        maxWidth="lg"
+        maxWidth="xl"
         sx={{
           display: "flex",
           flexDirection: "column",
