@@ -4,7 +4,9 @@ Blog app inspired by exercises up to Part 8 of <https://fullstackopen.com/en/>.
 
 **Link to project:** <https://fullstack-blog-v721.onrender.com/>
 
-![Blog demo](blog-demo.gif)
+<div align="center">
+  <img src="./blog-demo.gif">
+</div>
 
 ## How It's Made
 
