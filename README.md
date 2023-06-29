@@ -30,7 +30,7 @@ After learning Tanstack Query, I decided to use RTK Query instead. I was already
 
 Then I learned about client-side routing with React Router. I learned how to create a responsive app by styling React components with Material UI. I had been neglecting CSS, so I was really happy to learn this aspect of it. For the future, I'd like to learn more about web accessibility.
 
-I learned how to test the backend with Jest. For the frontend, I used Vitest instead along with React Testing Library. I also learned how to use Cypress. Testing looks like another big subject that I'd like to get a better handle on.
+I learned how to test the backend with Jest. For the frontend, I used Vitest instead along with React Testing Library. I also learned how to use Cypress. Testing is another big subject that I'd like to get a better handle on.
 
 With Git/GitHub, I definitely need to get better acquainted with branching. I currently have different versions of this app in different repos. In the future, I'd like to keep different versions within the same repo.
 
